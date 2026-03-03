@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlavrsAI – Food Delivery & Dining</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,800;0,9..144,900;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-logo" onclick="showPage('home')">
+        <span class="logo-icon">🍜</span>
+        <span class="logo-text">FlavrsAI</span>
+      </div>
+      <div class="nav-location">
+        <i class="fas fa-map-marker-alt loc-icon"></i>
+        <span class="loc-text">CR Park,Delhi</span>
+        <i class="fas fa-chevron-down loc-arrow"></i>
+      </div>
+      <div class="nav-search">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" placeholder="Search for restaurant, cuisine or a dish..." id="navSearchInput">
+      </div>
+      <div class="nav-actions">
+        <button class="btn-darkmode" id="darkToggle" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+        <button class="btn-login" onclick="showLoginModal()"><i class="fas fa-user"></i> Login</button>
+        <button class="btn-cart" id="cartIcon" onclick="showPage('cart')">
+          <i class="fas fa-shopping-bag"></i>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+      <button class="nav-hamburger" id="hamburger" onclick="toggleNavMenu()"><i class="fas fa-bars"></i></button>
+    </div>
+  </nav>
+
+  <!-- HOME PAGE -->
+  <div id="page-home" class="page active">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-bg">
+        <div class="hero-shape s1"></div>
+        <div class="hero-shape s2"></div>
+        <div class="hero-shape s3"></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-text">
+          <p class="hero-label">Order food & groceries</p>
+          <h1 class="hero-title">Hunger? <span class="accent">We've got</span><br>you covered.</h1>
+          <p class="hero-sub">Discover the best food & drinks from 50,000+ restaurants near you.</p>
+          <div class="hero-search-bar">
+            <div class="search-location">
+              <i class="fas fa-map-marker-alt"></i>
+              <input type="text" placeholder="Enter your delivery location" value="CR Park,Delhi">
+              <span class="sep"></span>
+            </div>
+            <div class="search-food">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Search for restaurant, cuisine or a dish..." id="heroSearch">
+            </div>
+            <button class="search-btn" onclick="handleHeroSearch()">Find Food</button>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <div class="hero-stat-num">50K+</div>
+              <div class="hero-stat-label">Restaurants</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-num">4.8★</div>
+              <div class="hero-stat-label">Avg Rating</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-num">30min</div>
+              <div class="hero-stat-label">Avg Delivery</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-illustration">
+          <div class="food-float f1">🍕</div>
+          <div class="food-float f2">🍔</div>
+          <div class="food-float f3">🍣</div>
+          <div class="food-float f4">🥗</div>
+          <div class="food-float f5">🍦</div>
+          <div class="hero-circle">
+            <div class="circle-ring r1"></div>
+            <div class="circle-ring r2"></div>
+            <div class="circle-core">🍜</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRUST BAR -->
+    <div class="trust-bar">
+      <div class="trust-inner">
+        <div class="trust-item"><i class="fas fa-shipping-fast"></i> 30-min Delivery</div>
+        <div class="trust-item"><i class="fas fa-shield-alt"></i> Safe & Hygienic</div>
+        <div class="trust-item"><i class="fas fa-tag"></i> Best Prices</div>
+        <div class="trust-item"><i class="fas fa-headset"></i> 24/7 Support</div>
+        <div class="trust-item"><i class="fas fa-undo"></i> Easy Refunds</div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <section class="categories-section">
+      <div class="container">
+        <h2 class="section-title">What's on your mind?</h2>
+        <div class="categories-container">
+          <div class="categories-grid" id="categoriesGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOP PICKS -->
+    <section class="restaurants-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Best Picks Near You</h2>
+          <div class="filters" id="filters"></div>
+        </div>
+        <div class="restaurants-grid" id="topPicksGrid"></div>
+      </div>
+    </section>
+
+    <!-- OFFERS BANNER -->
+    <section class="offers-section">
+      <div class="container">
+        <div class="offers-grid">
+          <div class="offer-card o1">
+            <div class="offer-text">
+              <span class="off-badge">40% OFF</span>
+              <h3>Your First Order</h3>
+              <p>Use code: NEWBIE40</p>
+            </div>
+            <div class="offer-emoji">🎉</div>
+          </div>
+          <div class="offer-card o2">
+            <div class="offer-text">
+              <span class="off-badge">FREE</span>
+              <h3>Delivery on weekends</h3>
+              <p>No minimum order value</p>
+            </div>
+            <div class="offer-emoji">🛵</div>
+          </div>
+          <div class="offer-card o3">
+            <div class="offer-text">
+              <span class="off-badge">₹200 OFF</span>
+              <h3>FoodieRush Pro</h3>
+              <p>Subscribe for ₹149/month</p>
+            </div>
+            <div class="offer-emoji">⭐</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECOMMENDED -->
+    <section class="restaurants-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Recommended for You</h2>
+          <a class="see-all" href="#">See all</a>
+        </div>
+        <div class="restaurants-grid" id="recommendedGrid"></div>
+      </div>
+    </section>
+
+    <!-- CUISINE EXPLORE -->
+    <section class="cuisine-section">
+      <div class="container">
+        <h2 class="section-title">Explore Cuisines</h2>
+        <div class="cuisine-container">
+          <div class="cuisine-grid" id="cuisineGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <div class="footer-logo">🍜 FoodieRush</div>
+            <p>Delivering happiness to your door, one meal at a time.</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-facebook"></i></a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h4>Company</h4>
+            <ul>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Blog</a></li>
+              <li><a href="#">Careers</a></li>
+              <li><a href="#">Investor Relations</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>For Restaurants</h4>
+            <ul>
+              <li><a href="#">Partner With Us</a></li>
+              <li><a href="#">Apps For You</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Learn More</h4>
+            <ul>
+              <li><a href="#">Privacy</a></li>
+              <li><a href="#">Security</a></li>
+              <li><a href="#">Terms</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Download App</h4>
+            <div class="app-btns">
+              <a href="#" class="app-btn"><i class="fab fa-apple"></i> App Store</a>
+              <a href="#" class="app-btn"><i class="fab fa-google-play"></i> Google Play</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2025 FoodieRush. By continuing past this page, you agree to our Terms of Service, Cookie Policy, Privacy
+            Policy and Content Policies.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- RESTAURANT PAGE -->
+  <div id="page-restaurant" class="page">
+    <div class="restaurant-hero" id="restaurantHero"></div>
+    <div class="restaurant-sticky-nav" id="restaurantStickyNav"></div>
+    <div class="restaurant-body">
+      <div class="menu-sidebar" id="menuSidebar"></div>
+      <div class="menu-main" id="menuMain"></div>
+    </div>
+  </div>
+
+  <!-- CART PAGE -->
+  <div id="page-cart" class="page">
+    <div class="page-wrap">
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+        <div class="breadcrumb" id="cartBreadcrumb">
+          <span>Home</span><i class="fas fa-chevron-right"></i>
+          <span>Restaurant</span><i class="fas fa-chevron-right"></i>
+          <span style="color:var(--flame)">Your Cart</span>
+        </div>
+      </div>
+
+      <!-- LEFT COLUMN -->
+      <div class="cart-col">
+        <!-- Cart Header -->
+        <div class="cart-hdr">
+          <h1 class="cart-title">Your Cart <span id="cartEmoji">🛒</span></h1>
+          <span class="cart-count-chip" id="cartChip">0 items</span>
+        </div>
+
+        <!-- Restaurant Info -->
+        <div id="cartRestaurantInfo"></div>
+
+        <!-- Cart Items -->
+        <div>
+          <div class="cart-items-wrap" id="cartItemsWrap">
+            <!-- Rendered by JS -->
+          </div>
+          <button class="add-more-row" id="addMoreCartBtn">
+            <i class="fas fa-plus"></i> Add more items
+          </button>
+        </div>
+
+        <!-- Cooking Instructions -->
+        <div class="instructions-card">
+          <div class="instr-header" onclick="toggleInstr(this)">
+            <h4><i class="fas fa-utensils"></i> Cooking Instructions</h4>
+            <i class="fas fa-chevron-down instr-toggle" id="instrToggle"></i>
+          </div>
+          <div class="instr-body" id="instrBody">
+            <textarea placeholder="Add cooking instructions for the restaurant (optional)..."
+              id="cookingInstructions"></textarea>
+          </div>
+        </div>
+
+        <!-- ══ AI RECOMMENDATION ENGINE ══ -->
+        <div class="ai-section">
+          <div class="ai-header">
+            <div class="ai-header-left">
+              <div class="ai-brain-icon">🤖</div>
+              <div class="ai-header-text">
+                <h3>AI Recommendation Engine</h3>
+                <p>Personalised picks based on your order & taste profile</p>
+              </div>
+            </div>
+            <div class="ai-live-badge"><span class="ai-live-dot"></span>LIVE AI</div>
+          </div>
+
+          <div class="ai-context" id="aiContextBar">
+            <i class="fas fa-brain"></i>
+            <span id="aiContextSpan">Analysing your order...</span>
+            <div class="ai-thinking">
+              AI thinking <div class="think-dots"><span></span><span></span><span></span></div>
+            </div>
+          </div>
+
+          <!-- Filter Tabs -->
+          <div class="ai-tabs">
+            <button class="ai-tab active" onclick="filterRecs('all',this)">✨ All for You</button>
+            <button class="ai-tab" onclick="filterRecs('pair',this)">🍷 Best Pairings</button>
+            <button class="ai-tab" onclick="filterRecs('popular',this)">🔥 Trending</button>
+            <button class="ai-tab" onclick="filterRecs('health',this)">🥗 Healthier</button>
+            <button class="ai-tab" onclick="filterRecs('dessert',this)">🍰 End Sweet</button>
+          </div>
+
+          <!-- Recommendation Cards -->
+          <div class="ai-recs" id="aiRecs">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Personalization nudge -->
+          <div class="ai-nudge" id="aiNudge">
+            <i class="fas fa-magic"></i>
+            <p>Your AI recommends adding a <strong id="nudgeItemName">Tiramisu</strong> — 94% of people who ordered this
+              also got dessert. <strong id="nudgeSaveAmount">Save ₹30</strong> by bundling now.</p>
+            <button class="ai-nudge-cta" onclick="addFromNudge()" id="nudgeCtaBtn">Add + Save</button>
+          </div>
+
+          <button class="ai-see-more" id="seeMoreBtn" onclick="loadMoreRecs()">
+            <i class="fas fa-sparkles"></i> Load more AI picks
+            <i class="fas fa-chevron-down"></i>
+          </button>
+        </div>
+
+        <!-- COMBO DEALS -->
+        <div class="combo-section">
+          <div class="combo-hdr">
+            <div class="combo-hdr-left">
+              <h4>⚡ AI Combo Builder</h4>
+              <p>Bundle items & save — curated just for your order</p>
+            </div>
+            <span class="combo-save">Save up to ₹120</span>
+          </div>
+          <div class="combo-items" id="comboItems">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="combo-action">
+            <div class="combo-total">
+              <s id="comboOrigPrice">₹628</s>
+              <strong id="comboPrice">₹508</strong>
+              <span style="font-size:11px;color:var(--sage);font-weight:700;" id="comboSaveTxt">You save ₹120</span>
+            </div>
+            <button class="btn-combo" onclick="addCombo()">⚡ Add Combo to Cart</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="right-col">
+        <!-- AI Delivery Prediction -->
+        <div class="bill-card">
+          <div style="padding:0 22px">
+            <div class="delivery-pred" style="margin-top:20px;">
+              <div class="pred-icon">🤖</div>
+              <div class="pred-text">
+                <p>AI Delivery Estimate</p>
+                <span>Based on traffic, kitchen load & weather</span>
+              </div>
+              <div class="pred-eta" id="predEta">28<small style="font-size:12px;font-weight:500">min</small></div>
+            </div>
+          </div>
+
+          <!-- Bill Details -->
+          <div class="bill-hdr">
+            <h3>Bill Details</h3>
+            <span class="savings-pill" id="savingsPill" style="display:none"><i class="fas fa-piggy-bank"></i> Saved
+              ₹0</span>
+          </div>
+          <div class="bill-rows">
+            <div class="bill-row">
+              <label><i class="fas fa-receipt"></i> Item Total</label>
+              <span id="billSubtotal">₹0</span>
+            </div>
+            <div class="bill-row">
+              <label><i class="fas fa-motorcycle"></i> Delivery Fee <span class="info-tip">i</span></label>
+              <span>₹30</span>
+            </div>
+            <div class="bill-row">
+              <label><i class="fas fa-server"></i> Platform Fee <span class="info-tip">i</span></label>
+              <span>₹5</span>
+            </div>
+            <div class="bill-row" id="discountRow" style="display:none">
+              <label class="green"><i class="fas fa-tag"></i> Coupon Discount</label>
+              <span class="green" id="discountAmt">– ₹0</span>
+            </div>
+            <div class="bill-row total">
+              <label>To Pay</label>
+              <span id="billTotal">₹0</span>
+            </div>
+          </div>
+
+          <!-- Coupon -->
+          <div class="coupon-wrap">
+            <div class="coupon-hdr">
+              <h4><i class="fas fa-tag"></i> Apply Coupon</h4>
+              <a onclick="showAllCoupons()">View all →</a>
+            </div>
+            <div class="coupon-row">
+              <input type="text" id="couponInput" placeholder="ENTER COUPON CODE">
+              <button onclick="applyCoupon()">Apply</button>
+            </div>
+            <div class="coupon-chips" id="couponChips">
+              <!-- Rendered by JS -->
+            </div>
+            <div id="couponMsg"></div>
+          </div>
+
+          <!-- Delivery Prediction bar -->
+          <div class="delivery-pred" style="margin:0 22px 18px;">
+            <div class="pred-icon" style="font-size:14px;width:32px;height:32px;">🛡️</div>
+            <div class="pred-text">
+              <p style="font-size:12px">Safe & Secure Payment</p>
+              <span>256-bit SSL · PCI Compliant</span>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="cta-wrap">
+            <button class="btn-checkout" onclick="showPage('address')">
+              <i class="fas fa-lock"></i> Proceed to Checkout
+              <span style="margin-left:4px;font-size:18px">→</span>
+            </button>
+            <div class="checkout-meta">
+              <span><i class="fas fa-shield-alt"></i> Secure</span>
+              <span><i class="fas fa-undo"></i> Easy Refund</span>
+              <span><i class="fas fa-clock"></i> Fast Delivery</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Taste Profile -->
+        <div class="taste-card">
+          <div class="taste-hdr">
+            <div class="pred-icon" style="width:34px;height:34px;font-size:15px">🧠</div>
+            <div>
+              <h4>Your AI Taste Profile</h4>
+              <span>Learned from 23 past orders</span>
+            </div>
+          </div>
+          <div class="taste-chips">
+            <span class="taste-chip tc-spicy">🌶 Spicy lover</span>
+            <span class="taste-chip tc-veg">🥦 Sometimes veg</span>
+            <span class="taste-chip tc-indian">🍛 Italian fan</span>
+            <span class="taste-chip tc-quick">⚡ Quick eater</span>
+          </div>
+          <div class="taste-bar-wrap">
+            <div class="taste-bar-label"><span>Spice tolerance</span><span>78%</span></div>
+            <div class="taste-bar">
+              <div class="taste-fill tf-spice" style="width:78%"></div>
+            </div>
+            <div class="taste-bar-label"><span>Sweet preference</span><span>55%</span></div>
+            <div class="taste-bar">
+              <div class="taste-fill tf-sweet" style="width:55%"></div>
+            </div>
+            <div class="taste-bar-label"><span>Healthy inclination</span><span>40%</span></div>
+            <div class="taste-bar">
+              <div class="taste-fill tf-healthy" style="width:40%"></div>
+            </div>
+          </div>
+          <button class="taste-update" onclick="showPreferenceModal()">🤖 Retrain AI with my preferences</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ADDRESS PAGE -->
+  <div id="page-address" class="page">
+    <div class="container">
+      <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+      <div class="checkout-layout">
+        <div class="checkout-left">
+          <h2 class="section-title">Delivery Address</h2>
+          <div class="address-list" id="addressList"></div>
+          <div class="add-address-form" id="addAddressForm">
+            <h3>Add New Address</h3>
+            <div class="form-row">
+              <input type="text" placeholder="Full Name" id="addrName" class="form-input">
+              <input type="text" placeholder="Phone Number" id="addrPhone" class="form-input">
+            </div>
+            <input type="text" placeholder="House / Flat / Floor No." id="addrHouse" class="form-input full">
+            <input type="text" placeholder="Apartment / Road / Area" id="addrArea" class="form-input full">
+            <div class="form-row">
+              <input type="text" placeholder="City" id="addrCity" class="form-input" value="Mumbai">
+              <input type="text" placeholder="Pincode" id="addrPin" class="form-input">
+            </div>
+            <div class="addr-type-btns">
+              <button class="addr-type active" data-type="Home"><i class="fas fa-home"></i> Home</button>
+              <button class="addr-type" data-type="Work"><i class="fas fa-briefcase"></i> Work</button>
+              <button class="addr-type" data-type="Other"><i class="fas fa-map-marker-alt"></i> Other</button>
+            </div>
+            <button class="btn-primary full" onclick="saveAddress()">Save & Continue</button>
+          </div>
+        </div>
+        <div class="checkout-right" id="addressOrderSummary"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT PAGE -->
+  <div id="page-payment" class="page">
+    <div class="container">
+      <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+      <div class="checkout-layout">
+        <div class="checkout-left">
+          <h2 class="section-title">Payment</h2>
+          <div class="payment-options" id="paymentOptions"></div>
+        </div>
+        <div class="checkout-right" id="paymentOrderSummary"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER SUCCESS PAGE -->
+  <div id="page-success" class="page">
+    <div class="success-page" id="successPage"></div>
+  </div>
+
+  <!-- ORDER TRACKING PAGE -->
+  <div id="page-tracking" class="page">
+    <div class="tracking-page" id="trackingPage"></div>
+  </div>
+
+  <!-- SEARCH RESULTS PAGE -->
+  <div id="page-search" class="page">
+    <div class="container">
+      <button class="back-btn" onclick="showPage('home')"><i class="fas fa-arrow-left"></i> Back</button>
+      <div id="searchResults"></div>
+    </div>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal-overlay" id="loginModal" onclick="closeModal(event)">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeLoginModal()"><i class="fas fa-times"></i></button>
+      <div class="modal-header">
+        <h2>Login or Signup</h2>
+        <p>Get access to your Orders, Wishlist and Recommendations</p>
+      </div>
+      <div class="modal-body">
+        <input type="text" placeholder="Enter your phone number / email" class="form-input full" id="loginInput">
+        <button class="btn-primary full" onclick="handleLogin()">Continue</button>
+        <div class="modal-divider"><span>or</span></div>
+        <button class="social-login-btn"><img src="https://www.google.com/favicon.ico" width="18"> Continue with
+          Google</button>
+        <button class="social-login-btn"><i class="fab fa-facebook" style="color:#1877f2"></i> Continue with
+          Facebook</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREFERENCE MODAL -->
+  <div class="modal-overlay" id="preferenceModal" onclick="closePreferenceModal(event)">
+    <div class="modal-box" style="max-width:500px">
+      <button class="modal-close" onclick="closePreferenceModal()"><i class="fas fa-times"></i></button>
+      <div class="modal-header">
+        <h2>🧠 Customize Your AI Taste Profile</h2>
+        <p>Help AI learn your food preferences better</p>
+      </div>
+      <div class="modal-body" style="max-height:600px;overflow-y:auto">
+        <!-- Spice Tolerance -->
+        <div class="pref-item">
+          <div class="pref-label">
+            <span>🌶 Spice Tolerance</span>
+            <span class="pref-value" id="spiceValue">78%</span>
+          </div>
+          <input type="range" id="spiceSlider" min="0" max="100" value="78" class="pref-slider" oninput="updatePreferenceValue('spice')">
+          <div class="pref-hint">Mild → Fiery</div>
+        </div>
+
+        <!-- Sweet Preference -->
+        <div class="pref-item">
+          <div class="pref-label">
+            <span>🍰 Sweet Preference</span>
+            <span class="pref-value" id="sweetValue">55%</span>
+          </div>
+          <input type="range" id="sweetSlider" min="0" max="100" value="55" class="pref-slider" oninput="updatePreferenceValue('sweet')">
+          <div class="pref-hint">Not Sweet → Very Sweet</div>
+        </div>
+
+        <!-- Healthy Inclination -->
+        <div class="pref-item">
+          <div class="pref-label">
+            <span>🥗 Healthy Inclination</span>
+            <span class="pref-value" id="healthyValue">40%</span>
+          </div>
+          <input type="range" id="healthySlider" min="0" max="100" value="40" class="pref-slider" oninput="updatePreferenceValue('healthy')">
+          <div class="pref-hint">Indulgent → Health-focused</div>
+        </div>
+
+        <!-- Vegetarian Preference -->
+        <div class="pref-item">
+          <div class="pref-label">
+            <span>🥦 Vegetarian Preference</span>
+            <span class="pref-value" id="vegValue">45%</span>
+          </div>
+          <input type="range" id="vegSlider" min="0" max="100" value="45" class="pref-slider" oninput="updatePreferenceValue('veg')">
+          <div class="pref-hint">Omnivore → Vegetarian</div>
+        </div>
+
+        <!-- Budget Consciousness -->
+        <div class="pref-item">
+          <div class="pref-label">
+            <span>💰 Budget Consciousness</span>
+            <span class="pref-value" id="budgetValue">60%</span>
+          </div>
+          <input type="range" id="budgetSlider" min="0" max="100" value="60" class="pref-slider" oninput="updatePreferenceValue('budget')">
+          <div class="pref-hint">Premium → Budget</div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:16px 22px;border-top:1px solid var(--border-light);display:flex;gap:10px">
+        <button class="btn-secondary full" onclick="closePreferenceModal()">Cancel</button>
+        <button class="btn-primary full" onclick="savePreferences()">💾 Save & Retrain AI</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CART TOAST -->
+  <div class="cart-toast" id="cartToast"></div>
+
+  <!-- MINI CART -->
+  <div class="mini-cart" id="miniCart" onclick="showPage('cart')"></div>
+
+  <!-- SCROLL TO TOP -->
+  <button class="scroll-top" id="scrollTopBtn" onclick="scrollToTop()"><i class="fas fa-chevron-up"></i></button>
+
+  <!-- load data first because app.js depends on constants defined there -->
+  <script src="{{ url_for('static', filename='data.js') }}"></script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+
+
+</html>
+
+
